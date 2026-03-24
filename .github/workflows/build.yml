@@ -1,0 +1,33 @@
+name: Build EXE
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        pip install pyinstaller
+        pip install py-clob-client eth_account requests web3
+        
+    - name: Build EXE
+      run: |
+        pyinstaller --onefile --name PolymarketBot bot.py
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: PolymarketBot
+        path: dist/PolymarketBot.exe
